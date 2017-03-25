@@ -23,28 +23,45 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 MyTask myTask = new MyTask();
-                myTask.execute();
-                for (int i = 0; i < 10 ; i++){
-//                    oneLoop();
-                    Log.d(TAG, "onClick: MainThread");
-                }
+                myTask.execute(10);
+//                for (int i = 0; i < 10 ; i++){
+                    oneLoop();
+//                    Log.d(TAG, "onClick: MainThread");
+//                }
             }
         });
 
 
     }
 
-    public class MyTask extends AsyncTask<Void , Void , Void>{
+    public class MyTask extends AsyncTask<Integer , Float , String>{
+
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
 
-            for (int i = 0 ; i < 10 ;i++){
+        @Override
+        protected void onProgressUpdate(Float... values) {
+            Log.d(TAG, "onProgressUpdate: " + values);
+            super.onProgressUpdate(values);
+        }
+
+        @Override
+        protected String doInBackground(Integer... params) {
+            for(int i = 0 ;i < params[0] ; i++){
                 oneLoop();
                 Log.d(TAG, "doInBackground: " + i);
+                publishProgress((float) i / (float) params[0]);
             }
 
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
         }
     }
 
