@@ -1,12 +1,14 @@
 package com.condingblocks.async;
 
 import android.os.AsyncTask;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
@@ -16,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
     Button btnStart;
     Button btnDestroy;
     TextView tvProgress;
+    public long initialTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,15 +63,28 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onProgressUpdate(Float... values) {
             Log.d(TAG, "onProgressUpdate: " + values[0]);
-//            tvProgress.setText(values[0].toString());
+            tvProgress.setText(values[0].toString());
             super.onProgressUpdate(values);
         }
 
         @Override
         protected String doInBackground(Integer... params) {
             for(int i = 0 ;i < params[0] ; i++){
+                initialTime = System.currentTimeMillis();
                 oneLoop();
                 Log.d(TAG, "doInBackground: " + i);
+
+                if(i == 5){
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, "Main", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                }
+
 //                publishProgress((float) i / (float) params[0]);
             }
             return "Completed";
@@ -84,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
     static void oneLoop(){
         long startTime = System.currentTimeMillis();
         while (System.currentTimeMillis() - startTime  < 1000);
+
     }
 
     @Override
