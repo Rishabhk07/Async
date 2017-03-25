@@ -6,11 +6,16 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = "MainActivity";
     Button btnStart;
+    Button btnDestroy;
+    TextView tvProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +23,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         btnStart = (Button) findViewById(R.id.btnStart);
+        btnDestroy = (Button) findViewById(R.id.btnDestroy);
+        
+        btnDestroy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        tvProgress = (TextView) findViewById(R.id.tvProgress);
 
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -25,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
                 MyTask myTask = new MyTask();
                 myTask.execute(10);
 //                for (int i = 0; i < 10 ; i++){
-                    oneLoop();
+//                    oneLoop();
 //                    Log.d(TAG, "onClick: MainThread");
 //                }
             }
@@ -44,7 +59,8 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onProgressUpdate(Float... values) {
-            Log.d(TAG, "onProgressUpdate: " + values);
+            Log.d(TAG, "onProgressUpdate: " + values[0]);
+//            tvProgress.setText(values[0].toString());
             super.onProgressUpdate(values);
         }
 
@@ -53,14 +69,14 @@ public class MainActivity extends AppCompatActivity {
             for(int i = 0 ;i < params[0] ; i++){
                 oneLoop();
                 Log.d(TAG, "doInBackground: " + i);
-                publishProgress((float) i / (float) params[0]);
+//                publishProgress((float) i / (float) params[0]);
             }
-
-            return null;
+            return "Completed";
         }
 
         @Override
         protected void onPostExecute(String s) {
+            Log.d(TAG, "onPostExecute: ");
             super.onPostExecute(s);
         }
     }
@@ -70,4 +86,9 @@ public class MainActivity extends AppCompatActivity {
         while (System.currentTimeMillis() - startTime  < 1000);
     }
 
+    @Override
+    protected void onDestroy() {
+        Log.d(TAG, "onDestroy: ");
+        super.onDestroy();
+    }
 }
